@@ -30,3 +30,7 @@
     transform: rotate(360deg);
   }
 }
+
+#boba-map {
+  height: 100vh;
+}
