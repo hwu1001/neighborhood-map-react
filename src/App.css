@@ -32,5 +32,14 @@
 }
 
 #boba-map {
-  height: 100vh;
+  height: calc(100vh - 60px);
+}
+
+.title-bar-content {
+  vertical-align: middle;
+  height: 55px;
+}
+
+#title-img {
+  cursor: pointer;
 }
