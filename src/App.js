@@ -3,6 +3,7 @@ import './App.css';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
 import Sidebar from 'react-sidebar';
 import TitleBar from './TitleBar';
+import VenueCard from './VenueCard';
 
 class App extends Component {
   constructor(props) {
@@ -49,15 +50,6 @@ class App extends Component {
 
     const contentHeader = (
       <span>
-        {/* {(
-          <a
-            onClick={this.menuButtonClick}
-            href="#"
-            style={styles.contentHeaderMenuLink}
-          >
-            = 
-          </a>
-        )} */}
         <img
           id={'title-img'}
           onClick={this.menuButtonClick}
@@ -104,11 +96,7 @@ class App extends Component {
                 return (
                   <Marker key={venue.id} position={[venue.location.lat, venue.location.lng]}>
                     <Popup>
-                      <h3>{venue.name}</h3>
-                      <img src={venue.categories[0].icon.prefix + 'bg_32' + venue.categories[0].icon.suffix} alt={'bubble tea icon'} />
-                      {venue.location.formattedAddress.map((i, key) => {
-                        return <div key={key}>{i}</div>
-                      })}
+                      <VenueCard venue={venue}/>
                     </Popup>
                   </Marker>
                 )
