@@ -12,7 +12,8 @@ class App extends Component {
     this.state = {
       position: [37.782230, -122.423750],
       venues: [], // array of objects from Foursquare API
-      docked: false,
+      filteredVenues: [],
+      docked: true,
       venueImgData: {}
     };
 
@@ -22,6 +23,17 @@ class App extends Component {
 
   onSetOpen(open) {
     this.setState({ docked: open });
+  }
+
+  onQueryUpdate = (query) => {
+    const queryLower = query.toLowerCase();
+    if (queryLower.length === 0) {
+      this.setState({ filteredVenues : this.state.venues });
+    }
+    else {
+      const filteredTemp = this.state.venues.filter((venue) => venue.name.toLowerCase().includes(queryLower));
+      this.setState({ filteredVenues : filteredTemp });
+    }
   }
 
   menuButtonClick(ev) {
@@ -77,7 +89,9 @@ class App extends Component {
               }
             }
             this.setState({ venues: venuesCopy });
+            this.setState({ filteredVenues: venuesCopy });
             this.setState({ venueImgData: imgDataCopy });
+            console.log('componentDidMount called');
           });
       })
       .catch(error => {
@@ -97,14 +111,14 @@ class App extends Component {
           src={require("./tea_64px.png")}
           alt={""}
         />
-        <span className={'title-bar-content'}>SF Bubble Tea</span>
+        <span className={'title-bar-content'}>Tea Time</span>
       </span>
     );
 
     return (
       <div>
         <Sidebar
-          sidebar={<SidebarContent venues={this.state.venues} imgData={this.state.venueImgData}/>}
+          sidebar={<SidebarContent venues={this.state.filteredVenues} imgData={this.state.venueImgData} onQueryUpdate={this.onQueryUpdate}/>}
           // open={this.state.open}
           onSetOpen={this.onSetOpen}
           styles={{
@@ -131,7 +145,7 @@ class App extends Component {
                   'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>' + 
                   '<div>Title icon made by <a href="https://www.flaticon.com/authors/mynamepong" title="mynamepong">mynamepong</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>'}
               />
-              {this.state.venues.map((venue) => {
+              {this.state.filteredVenues.map((venue) => {
                 return (
                   <Marker key={venue.id} position={[venue.location.lat, venue.location.lng]}>
                     <Popup>

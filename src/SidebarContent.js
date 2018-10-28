@@ -15,12 +15,14 @@ class SidebarContent extends Component {
   * @param {string} query - The query string input by the user
   * @return {undefined}
   */
-  updateQuery = (query) => {
+  updateQuery = (query, queryUpdateCb) => {
     this.setState({ query: query });
+    console.log(query);
+    queryUpdateCb(query);
   }
 
   render() {
-    const {venues, imgData} = this.props;
+    const {venues, imgData, onQueryUpdate} = this.props;
     const {query} = this.state;
   
     return (
@@ -29,7 +31,7 @@ class SidebarContent extends Component {
           type='text'
           placeholder='Search for a venue'
           value={query}
-          onChange={(event) => this.updateQuery(event.target.value)}
+          onChange={(event) => this.updateQuery(event.target.value, onQueryUpdate)}
         />
         {venues.length > 0 ? (
           venues.map((venue) => {
