@@ -22,7 +22,7 @@ class SidebarContent extends Component {
   }
 
   render() {
-    const {venues, imgData, onQueryUpdate} = this.props;
+    const {venues, imgData, onQueryUpdate, onVenueClick} = this.props;
     const {query} = this.state;
   
     return (
@@ -35,7 +35,7 @@ class SidebarContent extends Component {
         />
         {venues.length > 0 ? (
           venues.map((venue) => {
-            return(<VenueCard key={venue.id} venue={venue} type={'sidebar'} imgData={imgData[venue.id]}/>)
+            return(<VenueCard key={venue.id} venue={venue} type={'sidebar'} imgData={imgData[venue.id]} onVenueClick={onVenueClick}/>)
           })
         ) : (
           <div>No results found.</div>

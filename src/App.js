@@ -161,7 +161,7 @@ class App extends Component {
     return (
       <div>
         <Sidebar
-          sidebar={<SidebarContent venues={this.state.filteredVenues} imgData={this.state.venueImgData} onQueryUpdate={this.onQueryUpdate}/>}
+          sidebar={<SidebarContent venues={this.state.filteredVenues} imgData={this.state.venueImgData} onQueryUpdate={this.onQueryUpdate} onVenueClick={this.onMarkerClick}/>}
           // open={this.state.open}
           onSetOpen={this.onSetOpen}
           styles={{
@@ -193,7 +193,7 @@ class App extends Component {
                   <Pane key={`${venue.id}-anim`} name={`${venue.id}-pane`} className={this.state.venueClassList[venue.id] ? 'animated bounce' : 'no-click'}>
                     <Marker key={venue.id} position={[venue.location.lat, venue.location.lng]} onClick={(event) => this.onMarkerClick(event)}>
                       <Popup>
-                        <VenueCard venue={venue} type={'popup'}/>
+                        <VenueCard venue={venue} type={'popup'} onVenueClick={this.onMarkerClick}/>
                       </Popup>
                     </Marker>
                   </Pane>

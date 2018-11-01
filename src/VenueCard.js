@@ -5,6 +5,7 @@ const VenueCard = (props) => {
   const venue = props.venue;
   const type = props.type;
   const imgData = props.imgData;
+  const onVenueClick = props.onVenueClick;
 
   let img = null;
   if (type === 'popup' && venue.categories && venue.categories[0].icon) {
@@ -21,7 +22,7 @@ const VenueCard = (props) => {
   }
 
   return (
-    <div>
+    <div onClick={(event) => onVenueClick(event, venue.id)}>
       <h3>{venue.name}</h3>
       {img}
       {venue.location.formattedAddress.map((i, key) => {
