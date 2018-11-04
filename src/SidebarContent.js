@@ -26,7 +26,7 @@ class SidebarContent extends Component {
     const {query} = this.state;
   
     return (
-      <div>
+      <div className={'sidebar-container'}>
         <input 
           type='text'
           placeholder='Search for a venue'

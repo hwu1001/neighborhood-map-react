@@ -17,12 +17,12 @@ const VenueCard = (props) => {
     }
     else {
       // There's no meaningful alt text to provide for a random or placeholder image
-      img = <img src={imgData} alt={''}/>
+      img = <img className={'sidebar-img'} src={imgData} alt={''}/>
     }
   }
 
   return (
-    <div onClick={(event) => onVenueClick(event, venue.id)}>
+    <div className={type === 'sidebar' ? 'sidebar-venue-card' : 'popup-venue-card'} onClick={(event) => onVenueClick(event, venue.id)}>
       <h3>{venue.name}</h3>
       {img}
       {venue.location.formattedAddress.map((i, key) => {

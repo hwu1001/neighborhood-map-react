@@ -61,7 +61,6 @@ class App extends Component {
 
     let temp = {};
     let venClassListCopy = {};
-    console.log(this.state.venueClassList);
     for (const venueId of Object.keys(this.state.venueClassList)) {
       if (venueId === clickedVenueId) {
         venClassListCopy[venueId] = true;
@@ -71,7 +70,6 @@ class App extends Component {
       }
       temp[venueId] = false;
     }
-    console.log(venClassListCopy);
     this.setState({ venueClassList: venClassListCopy }, () => {
       setTimeout(() => {
         this.setState({ venueClassList: temp });
@@ -133,7 +131,6 @@ class App extends Component {
             this.setState({ venueImgData: imgDataCopy });
             this.setState({ venueClassList: venClassListCopy });
             console.log('componentDidMount called');
-            console.log(venClassListCopy);
           });
       })
       .catch(error => {
@@ -142,7 +139,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state.venueClassList);
 
     const contentHeader = (
       <span>
@@ -157,24 +153,27 @@ class App extends Component {
         <span className={'title-bar-content'}>Tea Time</span>
       </span>
     );
-
+    // https://www.npmjs.com/package/react-leaflet-sidetabs
     return (
       <div>
         <Sidebar
           sidebar={<SidebarContent venues={this.state.filteredVenues} imgData={this.state.venueImgData} onQueryUpdate={this.onQueryUpdate} onVenueClick={this.onMarkerClick}/>}
           // open={this.state.open}
           onSetOpen={this.onSetOpen}
-          styles={{
-            sidebar: {
-              background: "white" 
-            },
-            // overlay: {
-            //   position: 'relative',
-            //   backgroundColor: '',
-            // }
-          }}
+          // styles={{
+          //   sidebar: {
+          //     background: "white",
+          //     maxWidth: '280px',
+          //     textAlign: 'center'
+          //   },
+          //   // overlay: {
+          //   //   position: 'relative',
+          //   //   backgroundColor: '',
+          //   // }
+          // }}
           shadow={false}
           docked={this.state.docked}
+          pullRight={true}
         >
           <TitleBar title={contentHeader}>
             <Map
@@ -192,7 +191,7 @@ class App extends Component {
                 return (
                   <Pane key={`${venue.id}-anim`} name={`${venue.id}-pane`} className={this.state.venueClassList[venue.id] ? 'animated bounce' : 'no-click'}>
                     <Marker key={venue.id} position={[venue.location.lat, venue.location.lng]} onClick={(event) => this.onMarkerClick(event)}>
-                      <Popup>
+                      <Popup className={'foo bar'}>
                         <VenueCard venue={venue} type={'popup'} onVenueClick={this.onMarkerClick}/>
                       </Popup>
                     </Marker>
