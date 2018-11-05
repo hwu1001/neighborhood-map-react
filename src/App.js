@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import './App.css';
 import { Map, TileLayer, Marker, Popup, Pane } from 'react-leaflet';
-import Sidebar from 'react-sidebar';
-import TitleBar from './TitleBar';
+import { Sidebar, Tab } from 'react-leaflet-sidetabs'
 import VenueCard from './VenueCard';
 import SidebarContent from './SidebarContent';
+import { FiChevronRight, FiSearch } from "react-icons/fi";
 
 class App extends Component {
   constructor(props) {
@@ -16,14 +16,29 @@ class App extends Component {
       docked: true,
       venueImgData: {},
       venueClassList: {},
+      collapsed: true,
+      selected: 'search'
     };
 
     this.onSetOpen = this.onSetOpen.bind(this);
+    this.onClose = this.onClose.bind(this);
+    this.onOpen = this.onOpen.bind(this);
     this.menuButtonClick = this.menuButtonClick.bind(this);
   }
 
   onSetOpen(open) {
     this.setState({ docked: open });
+  }
+
+  onClose() {
+    this.setState({ collapsed: true });
+  }
+
+  onOpen(id) {
+    this.setState({
+      collapsed: false,
+      selected: id,
+    });
   }
 
   onQueryUpdate = (query) => {
@@ -43,20 +58,9 @@ class App extends Component {
   }
 
   onMarkerClick = (event, clickId = null) => {
-    let clickedVenueId = null;
-    if (clickId != null) {
-      clickedVenueId = clickId;
-    }
-    else {
-      const clsList = event.target.getElement().parentElement.classList;
-      let clsId = null;
-      for (let index = 0; index < clsList.length; index++) {
-        if (clsList[index].includes('pane-pane')) {
-          clsId = clsList[index];
-        }
-      }
-      let splitStr = clsId.split('-');
-      clickedVenueId = splitStr[1];
+    let clickedVenueId = clickId;
+    if (clickId === null) {
+      return;
     }
 
     let temp = {};
@@ -70,6 +74,8 @@ class App extends Component {
       }
       temp[venueId] = false;
     }
+    // Remove the classes on the Pane components so that the animation can
+    // appear on the next click
     this.setState({ venueClassList: venClassListCopy }, () => {
       setTimeout(() => {
         this.setState({ venueClassList: temp });
@@ -139,68 +145,49 @@ class App extends Component {
   }
 
   render() {
-
-    const contentHeader = (
-      <span>
-        <img
-          id={'title-img'}
-          onClick={this.menuButtonClick}
-          title={(!this.state.docked ? 'Open sidebar' : 'Close sidebar')}
-          className={'title-bar-content'}
-          src={require("./tea_64px.png")}
-          alt={""}
-        />
-        <span className={'title-bar-content'}>Tea Time</span>
-      </span>
-    );
-    // https://www.npmjs.com/package/react-leaflet-sidetabs
     return (
       <div>
         <Sidebar
-          sidebar={<SidebarContent venues={this.state.filteredVenues} imgData={this.state.venueImgData} onQueryUpdate={this.onQueryUpdate} onVenueClick={this.onMarkerClick}/>}
-          // open={this.state.open}
-          onSetOpen={this.onSetOpen}
-          // styles={{
-          //   sidebar: {
-          //     background: "white",
-          //     maxWidth: '280px',
-          //     textAlign: 'center'
-          //   },
-          //   // overlay: {
-          //   //   position: 'relative',
-          //   //   backgroundColor: '',
-          //   // }
-          // }}
-          shadow={false}
-          docked={this.state.docked}
-          pullRight={true}
+          id='sidebar'
+          position='right'
+          collapsed={this.state.collapsed}
+          closeIcon={<FiChevronRight />}
+          selected={this.state.selected}
+          onClose={this.onClose}
+          onOpen={this.onOpen}
         >
-          <TitleBar title={contentHeader}>
-            <Map
-              id="boba-map"
-              center={this.state.position}
-              zoom={14}>
-              <TileLayer
-                url={"https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiaHl3dSIsImEiOiJjamxvdHUxd3QwMTJ4M2xrMHMxOGV2djNzIn0.k0k_pXFdtQ-_OeYtctQOFw"}
-                attribution={'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-                  '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-                  'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>' + 
-                  '<div>Title icon made by <a href="https://www.flaticon.com/authors/mynamepong" title="mynamepong">mynamepong</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>'}
-              />
-              {this.state.filteredVenues.map((venue) => {
-                return (
-                  <Pane key={`${venue.id}-anim`} name={`${venue.id}-pane`} className={this.state.venueClassList[venue.id] ? 'animated bounce' : 'no-click'}>
-                    <Marker key={venue.id} position={[venue.location.lat, venue.location.lng]} onClick={(event) => this.onMarkerClick(event)}>
-                      <Popup className={'foo bar'}>
-                        <VenueCard venue={venue} type={'popup'} onVenueClick={this.onMarkerClick}/>
-                      </Popup>
-                    </Marker>
-                  </Pane>
-                )
-              })}
-            </Map>
-          </TitleBar>
+          <Tab id='search' header='Tea Time' icon={<FiSearch />}>
+            <SidebarContent 
+              venues={this.state.filteredVenues} 
+              imgData={this.state.venueImgData} 
+              onQueryUpdate={this.onQueryUpdate} 
+              onVenueClick={this.onMarkerClick}
+            />
+          </Tab>
         </Sidebar>
+        <Map
+          id="boba-map"
+          center={this.state.position}
+          zoom={14}>
+          <TileLayer
+            url={"https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiaHl3dSIsImEiOiJjamxvdHUxd3QwMTJ4M2xrMHMxOGV2djNzIn0.k0k_pXFdtQ-_OeYtctQOFw"}
+            attribution={'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+              '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+              'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>' + 
+              '<div>Title icon made by <a href="https://www.flaticon.com/authors/mynamepong" title="mynamepong">mynamepong</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>'}
+          />
+          {this.state.filteredVenues.map((venue) => {
+            return (
+              <Pane key={`${venue.id}-anim`} name={`${venue.id}-pane`} className={this.state.venueClassList[venue.id] ? 'animated bounce' : 'no-click'}>
+                <Marker key={venue.id} position={[venue.location.lat, venue.location.lng]} onClick={(event) => this.onMarkerClick(event, venue.id)}>
+                  <Popup>
+                    <VenueCard venue={venue} type={'popup'} onVenueClick={this.onMarkerClick}/>
+                  </Popup>
+                </Marker>
+              </Pane>
+            )
+          })}
+        </Map>
       </div>
     );
   }
