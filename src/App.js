@@ -156,12 +156,13 @@ class App extends Component {
           onClose={this.onClose}
           onOpen={this.onOpen}
         >
-          <Tab id='search' header='Tea Time' icon={<FiSearch />}>
+          <Tab id='search' header='Tea Time' tabIndex={0} icon={<FiSearch />}>
             <SidebarContent 
               venues={this.state.filteredVenues} 
               imgData={this.state.venueImgData} 
               onQueryUpdate={this.onQueryUpdate} 
               onVenueClick={this.onMarkerClick}
+              collapsed={this.state.collapsed}
             />
           </Tab>
         </Sidebar>

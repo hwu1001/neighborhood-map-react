@@ -10,8 +10,9 @@ class VenueCard extends Component {
     open: false,
   }
 
-  toggle = () => {
+  toggle = (event, venueId, venueClickCb) => {
     this.setState(prevState => ({ open: !prevState.open }));
+    venueClickCb(event, venueId);
   }
 
   render() {
@@ -19,10 +20,11 @@ class VenueCard extends Component {
     const type = this.props.type;
     const imgData = this.props.imgData;
     const onVenueClick = this.props.onVenueClick;
+    const collapsed = this.props.collapsed;
 
     let img = null;
     if (type === 'popup' && venue.categories && venue.categories[0].icon) {
-      img = <img className={'sidebar-img'} src={venue.categories[0].icon.prefix + 'bg_32' + venue.categories[0].icon.suffix} alt={'bubble tea icon'} />
+      img = <img className={'sidebar-img'} src={venue.categories[0].icon.prefix + 'bg_32' + venue.categories[0].icon.suffix} alt={''} />
     }
     else if (type === 'sidebar') {
       if (imgData && imgData.prefix && imgData.suffix) {
@@ -36,14 +38,21 @@ class VenueCard extends Component {
 
     return(
       <Fragment>
-        <div className={type === 'sidebar' ? 'sidebar-venue-card' : 'popup-venue-card'} onClick={(event) => onVenueClick(event, venue.id)}>
-        <h3 onClick={this.toggle}>{venue.name}</h3>
-        <Expand open={type === 'sidebar' ? this.state.open : true}> 
-          {img}
-          {venue.location.formattedAddress.map((i, key) => {
-            return <div key={key}>{i}</div>
-          })}
-        </Expand>
+        <div 
+          className={type === 'sidebar' ? 'sidebar-venue-card' : 'popup-venue-card'} 
+          onClick={(event) => this.toggle(event, venue.id, onVenueClick)}
+          tabIndex={type === 'sidebar' && collapsed ? -1 : 0}
+          aria-labelledby={`${venue.id}-venue-name ${venue.id}-addr`}
+        >
+          <h3 id={`${venue.id}-venue-name`}>{venue.name}</h3>
+          <Expand open={type === 'sidebar' ? this.state.open : true}> 
+            {img}
+            <div id={`${venue.id}-addr`}>
+              {venue.location.formattedAddress.map((i, key) => {
+                return <div key={key}>{i}</div>
+              })}
+            </div>
+          </Expand>
         </div>
       </Fragment>
     )

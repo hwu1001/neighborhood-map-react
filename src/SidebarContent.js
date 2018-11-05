@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from "prop-types";
 import VenueCard from './VenueCard';
+const attribution = require('./powered-by-foursquare-blue.svg')
 
 class SidebarContent extends Component {
   state = {
@@ -22,24 +23,33 @@ class SidebarContent extends Component {
   }
 
   render() {
-    const {venues, imgData, onQueryUpdate, onVenueClick} = this.props;
+    const {venues, imgData, onQueryUpdate, onVenueClick, collapsed} = this.props;
     const {query} = this.state;
   
     return (
-      <div className={'sidebar-container'}>
+      <div aria-hidden={collapsed ? 'true' : 'false'} tabIndex={collapsed ? -1 : 0} className={'sidebar-container'} aria-label={'Search for venues'}>
         <input 
           type='text'
           placeholder='Search for a venue'
           value={query}
           onChange={(event) => this.updateQuery(event.target.value, onQueryUpdate)}
+          aria-hidden={collapsed ? 'true' : 'false'} 
+          // tabIndex={collapsed ? -1 : null}
         />
         {venues.length > 0 ? (
           venues.map((venue) => {
-            return(<VenueCard key={venue.id} venue={venue} type={'sidebar'} imgData={imgData[venue.id]} onVenueClick={onVenueClick}/>)
+            return(<VenueCard key={venue.id} venue={venue} type={'sidebar'} imgData={imgData[venue.id]} onVenueClick={onVenueClick} collapsed={collapsed}/>)
           })
         ) : (
           <div>No results found.</div>
         )}
+        <a 
+          href={'https://foursquare.com/'} 
+          target={'_blank'} 
+          aria-hidden={collapsed ? 'true' : 'false'} 
+          tabIndex={collapsed ? -1 : 0}>
+          <img className={'fs-attribution'} src={attribution} alt={'Powered by Foursquare'}/>
+        </a>
       </div>
     );
   }
