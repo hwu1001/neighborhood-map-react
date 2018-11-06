@@ -13,21 +13,14 @@ class App extends Component {
       position: [37.782230, -122.423750],
       venues: [], // array of objects from Foursquare API
       filteredVenues: [],
-      docked: true,
       venueImgData: {},
       venueClassList: {},
       collapsed: true,
       selected: 'search'
     };
 
-    this.onSetOpen = this.onSetOpen.bind(this);
     this.onClose = this.onClose.bind(this);
     this.onOpen = this.onOpen.bind(this);
-    this.menuButtonClick = this.menuButtonClick.bind(this);
-  }
-
-  onSetOpen(open) {
-    this.setState({ docked: open });
   }
 
   onClose() {
@@ -50,11 +43,6 @@ class App extends Component {
       const filteredTemp = this.state.venues.filter((venue) => venue.name.toLowerCase().includes(queryLower));
       this.setState({ filteredVenues : filteredTemp });
     }
-  }
-
-  menuButtonClick(ev) {
-    ev.preventDefault();
-    this.onSetOpen(!this.state.docked);
   }
 
   onMarkerClick = (event, clickId = null) => {
@@ -92,7 +80,6 @@ class App extends Component {
             let venuesCopy = [];
             let imgDataCopy = {};
             let venClassListCopy = {};
-            // let venuesCopy = json.response.venues;
             for (const venue of json.response.venues) {
               // If we don't have this data then there's nothing to show on the map
               if (venue.id && venue.name && venue.location && venue.location.lat && venue.location.lng) {
@@ -136,7 +123,6 @@ class App extends Component {
             this.setState({ filteredVenues: venuesCopy });
             this.setState({ venueImgData: imgDataCopy });
             this.setState({ venueClassList: venClassListCopy });
-            console.log('componentDidMount called');
           });
       })
       .catch(error => {
@@ -179,10 +165,24 @@ class App extends Component {
           />
           {this.state.filteredVenues.map((venue) => {
             return (
-              <Pane key={`${venue.id}-anim`} name={`${venue.id}-pane`} className={this.state.venueClassList[venue.id] ? 'animated bounce' : 'no-click'}>
-                <Marker key={venue.id} position={[venue.location.lat, venue.location.lng]} onClick={(event) => this.onMarkerClick(event, venue.id)}>
+              <Pane 
+                key={`${venue.id}-anim`}
+                name={`${venue.id}-pane`}
+                className={this.state.venueClassList[venue.id] ? 'animated bounce' : 'no-click'}
+              >
+                <Marker 
+                  key={venue.id} 
+                  position={[venue.location.lat, venue.location.lng]} 
+                  onClick={(event) => this.onMarkerClick(event, venue.id)}
+                  title={venue.name}
+                  alt={venue.name}
+                >
                   <Popup>
-                    <VenueCard venue={venue} type={'popup'} onVenueClick={this.onMarkerClick}/>
+                    <VenueCard
+                      venue={venue}
+                      type={'popup'}
+                      onVenueClick={this.onMarkerClick}
+                    />
                   </Popup>
                 </Marker>
               </Pane>

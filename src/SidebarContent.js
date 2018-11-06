@@ -18,7 +18,6 @@ class SidebarContent extends Component {
   */
   updateQuery = (query, queryUpdateCb) => {
     this.setState({ query: query });
-    console.log(query);
     queryUpdateCb(query);
   }
 
