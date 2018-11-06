@@ -35,6 +35,8 @@ class App extends Component {
   }
 
   onQueryUpdate = (query) => {
+    // For search just use a simple solution
+    // https://koukia.ca/top-6-ways-to-search-for-a-string-in-javascript-and-performance-benchmarks-ce3e9b81ad31
     const queryLower = query.toLowerCase();
     if (queryLower.length === 0) {
       this.setState({ filteredVenues : this.state.venues });
