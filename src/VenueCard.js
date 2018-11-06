@@ -15,7 +15,7 @@ class VenueCard extends Component {
 
   /**
   * @description Opens and closes a venue card when it appears in the sidebar
-  * @param {EventTarget} event - Event object of action
+  * @param {SyntheticEvent} event - Event object of action
   * @param {string} venueId - Identifier from API that identifies a specific venue
   * @param {function} venueClickCb - Callback to be used to update state on clicked venue
   * @return {undefined}

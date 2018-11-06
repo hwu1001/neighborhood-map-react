@@ -6,6 +6,9 @@ import VenueCard from './VenueCard';
 import SidebarContent from './SidebarContent';
 import { FiChevronRight, FiSearch } from "react-icons/fi";
 
+/**
+* @description Represents the single page application of the map holding venues
+*/
 class App extends Component {
   constructor(props) {
     super(props);
@@ -14,7 +17,7 @@ class App extends Component {
       venues: [], // array of objects from Foursquare API
       filteredVenues: [],
       venueImgData: {},
-      venueClassList: {},
+      venueClassList: {}, // manage the classes used for animating markers
       collapsed: true,
       selected: 'search'
     };
@@ -23,10 +26,19 @@ class App extends Component {
     this.onOpen = this.onOpen.bind(this);
   }
 
+  /**
+  * @description Handles sidebar state when it is closed
+  * @returns {undefined}
+  */
   onClose() {
     this.setState({ collapsed: true });
   }
 
+  /**
+  * @description Handles sidebar state when a tab is opened
+  * @param {string} id - The id of a sidebar tab
+  * @returns {undefined}
+  */
   onOpen(id) {
     this.setState({
       collapsed: false,
@@ -34,6 +46,11 @@ class App extends Component {
     });
   }
 
+  /**
+  * @description Handles updating the filtered venue state when a user searches for venues
+  * @param {string} query - User input query string
+  * @returns {undefined}
+  */
   onQueryUpdate = (query) => {
     // For search just use a simple solution
     // https://koukia.ca/top-6-ways-to-search-for-a-string-in-javascript-and-performance-benchmarks-ce3e9b81ad31
@@ -47,6 +64,12 @@ class App extends Component {
     }
   }
 
+  /**
+  * @description Handles when a marker or venue card is clicked
+  * @param {SyntheticEvent} event - One of the designated shelf types ('read', 'wantToRead', 'currentlyReading') - note: not currently used
+  * @param {string} clickId - The identifier given by the API for the clicked venue
+  * @returns {undefined}
+  */
   onMarkerClick = (event, clickId = null) => {
     let clickedVenueId = clickId;
     if (clickId === null) {
@@ -73,6 +96,10 @@ class App extends Component {
     });
   }
 
+  /**
+  * @description Sets state when the Map app mounts on the page
+  * @returns {undefined}
+  */
   componentDidMount() {
     let apiUrl = 'https://api.foursquare.com/v2/venues/search?client_id=U1E3HY25OEO1J3WQFC4QZBA4NZNR44W1ELUPUJOC34DISYQI&client_secret=C4ADDKI4L2RP0AHEBV3YZNAXCGWOY4QYTBJTQQ4Y2EPFARLY&v=20180323&ll=37.782230,-122.423750&radius=4830&query=boba&categoryId=52e81612bcbc57f1066b7a0c'
     fetch(apiUrl)
@@ -132,6 +159,10 @@ class App extends Component {
       });
   }
 
+  /**
+  * @description Renders the Map app component
+  * @returns {undefined}
+  */
   render() {
     return (
       <div>
