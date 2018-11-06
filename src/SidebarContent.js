@@ -29,7 +29,7 @@ class SidebarContent extends Component {
   render() {
     const {venues, imgData, onQueryUpdate, onVenueClick, collapsed} = this.props;
     const {query} = this.state;
-  
+    const onlineStatus = window.navigator.onLine ? null : <div aria-hidden={collapsed ? 'true' : 'false'} tabIndex={collapsed ? -1 : 0}>Some data may not be displayed while offline.</div>;
     return (
       // While the sidebar is hidden, make sure elements are not tab-able and are not read
       // since they do not appear on the screen
@@ -49,6 +49,7 @@ class SidebarContent extends Component {
         ) : (
           <div aria-hidden={collapsed ? 'true' : 'false'} tabIndex={collapsed ? -1 : 0}>No results found.</div>
         )}
+        {onlineStatus}
         <a 
           href={'https://foursquare.com/'} 
           target={'_blank'} 
@@ -64,7 +65,7 @@ class SidebarContent extends Component {
 SidebarContent.propTypes = {
   venues: PropTypes.array,
   imgData: PropTypes.object,
-  onQueryUpdate: PropTypes.function,
+  onQueryUpdate: PropTypes.func,
   collapsed: PropTypes.bool
 };
 

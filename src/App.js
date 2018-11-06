@@ -56,11 +56,11 @@ class App extends Component {
     // https://koukia.ca/top-6-ways-to-search-for-a-string-in-javascript-and-performance-benchmarks-ce3e9b81ad31
     const queryLower = query.toLowerCase();
     if (queryLower.length === 0) {
-      this.setState({ filteredVenues : this.state.venues });
+      this.setState({ filteredVenues: this.state.venues });
     }
     else {
       const filteredTemp = this.state.venues.filter((venue) => venue.name.toLowerCase().includes(queryLower));
-      this.setState({ filteredVenues : filteredTemp });
+      this.setState({ filteredVenues: filteredTemp });
     }
   }
 
@@ -134,7 +134,7 @@ class App extends Component {
                 //             imgDataCopy[venue.id] = 'https://via.placeholder.com/300x300';                          
                 //           }
                 //         }
-                        
+
                 //       });
                 //   })
                 //   .catch(error => {
@@ -176,10 +176,10 @@ class App extends Component {
           onOpen={this.onOpen}
         >
           <Tab id='search' header='Tea Time' tabIndex={0} icon={<FiSearch />}>
-            <SidebarContent 
-              venues={this.state.filteredVenues} 
-              imgData={this.state.venueImgData} 
-              onQueryUpdate={this.onQueryUpdate} 
+            <SidebarContent
+              venues={this.state.filteredVenues}
+              imgData={this.state.venueImgData}
+              onQueryUpdate={this.onQueryUpdate}
               onVenueClick={this.onMarkerClick}
               collapsed={this.state.collapsed}
             />
@@ -193,19 +193,19 @@ class App extends Component {
             url={"https://api.mapbox.com/v4/mapbox.streets/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoiaHl3dSIsImEiOiJjamxvdHUxd3QwMTJ4M2xrMHMxOGV2djNzIn0.k0k_pXFdtQ-_OeYtctQOFw"}
             attribution={'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
               '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-              'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>' + 
+              'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>' +
               '<div>Title icon made by <a href="https://www.flaticon.com/authors/mynamepong" title="mynamepong">mynamepong</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a> is licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a></div>'}
           />
           {this.state.filteredVenues.map((venue) => {
             return (
-              <Pane 
+              <Pane
                 key={`${venue.id}-anim`}
                 name={`${venue.id}-pane`}
                 className={this.state.venueClassList[venue.id] ? 'animated bounce' : 'no-click'}
               >
-                <Marker 
-                  key={venue.id} 
-                  position={[venue.location.lat, venue.location.lng]} 
+                <Marker
+                  key={venue.id}
+                  position={[venue.location.lat, venue.location.lng]}
                   onClick={(event) => this.onMarkerClick(event, venue.id)}
                   title={venue.name}
                   alt={venue.name}
@@ -214,7 +214,9 @@ class App extends Component {
                     <VenueCard
                       venue={venue}
                       type={'popup'}
+                      imgData={this.state.venueImgData[venue.id]}
                       onVenueClick={this.onMarkerClick}
+                      collapsed={this.state.collapsed}
                     />
                   </Popup>
                 </Marker>

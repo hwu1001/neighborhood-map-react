@@ -30,11 +30,7 @@ class VenueCard extends Component {
   * @returns {undefined}
   */
   render() {
-    const venue = this.props.venue;
-    const type = this.props.type;
-    const imgData = this.props.imgData;
-    const onVenueClick = this.props.onVenueClick;
-    const collapsed = this.props.collapsed;
+    const {venue, type, imgData, onVenueClick, collapsed} = this.props;
 
     let img = null;
     if (type === 'popup' && venue.categories && venue.categories[0].icon) {
@@ -76,8 +72,7 @@ class VenueCard extends Component {
 VenueCard.propTypes = {
   venue: PropTypes.object,
   type: PropTypes.string,
-  imgData: PropTypes.object,
-  onVenueClick: PropTypes.function,
+  onVenueClick: PropTypes.func,
   collapsed: PropTypes.bool
 };
 

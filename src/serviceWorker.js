@@ -18,7 +18,7 @@ const isLocalhost = Boolean(
     )
 );
 
-export function register(config) {
+export function register() {
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
     const publicUrl = new URL(process.env.PUBLIC_URL, window.location);
@@ -31,10 +31,11 @@ export function register(config) {
 
     window.addEventListener('load', () => {
       const swUrl = `${process.env.PUBLIC_URL}/service-worker.js`;
+      console.log(`The public URL: ${swUrl}`);
 
       if (isLocalhost) {
         // This is running on localhost. Let's check if a service worker still exists or not.
-        checkValidServiceWorker(swUrl, config);
+        checkValidServiceWorker(swUrl);
 
         // Add some additional logging to localhost, pointing developers to the
         // service worker/PWA documentation.
@@ -46,13 +47,13 @@ export function register(config) {
         });
       } else {
         // Is not local host. Just register service worker
-        registerValidSW(swUrl, config);
+        registerValidSW(swUrl);
       }
     });
   }
 }
 
-function registerValidSW(swUrl, config) {
+function registerValidSW(swUrl) {
   navigator.serviceWorker
     .register(swUrl)
     .then(registration => {
@@ -66,21 +67,11 @@ function registerValidSW(swUrl, config) {
               // It's the perfect time to display a "New content is
               // available; please refresh." message in your web app.
               console.log('New content is available; please refresh.');
-
-              // Execute callback
-              if (config.onUpdate) {
-                config.onUpdate(registration);
-              }
             } else {
               // At this point, everything has been precached.
               // It's the perfect time to display a
               // "Content is cached for offline use." message.
               console.log('Content is cached for offline use.');
-
-              // Execute callback
-              if (config.onSuccess) {
-                config.onSuccess(registration);
-              }
             }
           }
         };
@@ -91,7 +82,7 @@ function registerValidSW(swUrl, config) {
     });
 }
 
-function checkValidServiceWorker(swUrl, config) {
+function checkValidServiceWorker(swUrl) {
   // Check if the service worker can be found. If it can't reload the page.
   fetch(swUrl)
     .then(response => {
@@ -108,7 +99,7 @@ function checkValidServiceWorker(swUrl, config) {
         });
       } else {
         // Service worker found. Proceed as normal.
-        registerValidSW(swUrl, config);
+        registerValidSW(swUrl);
       }
     })
     .catch(() => {
