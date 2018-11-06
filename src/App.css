@@ -3,6 +3,7 @@
 }
 
 #sidebar {
+  /* Need to leave room for map attribution */
   height: 90%;
 }
 

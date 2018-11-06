@@ -5,16 +5,30 @@ import PropTypes from "prop-types";
 // the way to do it with React Leaftlet is much more involved
 import Expand from 'react-expand-animated';
 
+/**
+* @description Represents the card that holds venue information
+*/
 class VenueCard extends Component {
   state = {
     open: false,
   }
 
+  /**
+  * @description Opens and closes a venue card when it appears in the sidebar
+  * @param {EventTarget} event - Event object of action
+  * @param {string} venueId - Identifier from API that identifies a specific venue
+  * @param {function} venueClickCb - Callback to be used to update state on clicked venue
+  * @return {undefined}
+  */
   toggle = (event, venueId, venueClickCb) => {
     this.setState(prevState => ({ open: !prevState.open }));
     venueClickCb(event, venueId);
   }
 
+  /**
+  * @description Renders a venue card
+  * @returns {undefined}
+  */
   render() {
     const venue = this.props.venue;
     const type = this.props.type;
@@ -60,7 +74,11 @@ class VenueCard extends Component {
 }
 
 VenueCard.propTypes = {
-  venue: PropTypes.object
+  venue: PropTypes.object,
+  type: PropTypes.string,
+  imgData: PropTypes.object,
+  onVenueClick: PropTypes.function,
+  collapsed: PropTypes.bool
 };
 
 export default VenueCard;
