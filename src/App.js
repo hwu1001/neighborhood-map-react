@@ -5,6 +5,7 @@ import { Sidebar, Tab } from 'react-leaflet-sidetabs'
 import VenueCard from './VenueCard';
 import SidebarContent from './SidebarContent';
 import { FiChevronRight, FiSearch } from "react-icons/fi";
+import * as utils from './utils';
 
 /**
 * @description Represents the single page application of the map holding venues
@@ -13,11 +14,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      position: [37.782230, -122.423750],
+      position: [37.782230, -122.423750], // Right around Jefferson Square Park in SF
       venues: [], // array of objects from Foursquare API
       filteredVenues: [],
       venueImgData: {},
-      venueClassList: {}, // manage the classes used for animating markers
+      venueClicked: {}, // manage the whether a venue is clicked or not
       collapsed: true,
       selected: 'search'
     };
@@ -77,21 +78,21 @@ class App extends Component {
     }
 
     let temp = {};
-    let venClassListCopy = {};
-    for (const venueId of Object.keys(this.state.venueClassList)) {
+    let venClickedCopy = {};
+    for (const venueId of Object.keys(this.state.venueClicked)) {
       if (venueId === clickedVenueId) {
-        venClassListCopy[venueId] = true;
+        venClickedCopy[venueId] = true;
       }
       else {
-        venClassListCopy[venueId] = false;
+        venClickedCopy[venueId] = false;
       }
       temp[venueId] = false;
     }
     // Remove the classes on the Pane components so that the animation can
     // appear on the next click
-    this.setState({ venueClassList: venClassListCopy }, () => {
+    this.setState({ venueClicked: venClickedCopy }, () => {
       setTimeout(() => {
-        this.setState({ venueClassList: temp });
+        this.setState({ venueClicked: temp });
       }, 1000);
     });
   }
@@ -102,57 +103,28 @@ class App extends Component {
   */
   componentDidMount() {
     let apiUrl = 'https://api.foursquare.com/v2/venues/search?client_id=U1E3HY25OEO1J3WQFC4QZBA4NZNR44W1ELUPUJOC34DISYQI&client_secret=C4ADDKI4L2RP0AHEBV3YZNAXCGWOY4QYTBJTQQ4Y2EPFARLY&v=20180323&ll=37.782230,-122.423750&radius=4830&query=boba&categoryId=52e81612bcbc57f1066b7a0c'
-    fetch(apiUrl)
-      .then(response => {
-        response.json()
-          .then(json => {
-            let venuesCopy = [];
-            let imgDataCopy = {};
-            let venClassListCopy = {};
-            for (const venue of json.response.venues) {
-              // If we don't have this data then there's nothing to show on the map
-              if (venue.id && venue.name && venue.location && venue.location.lat && venue.location.lng) {
-                venuesCopy.push(venue);
-                venClassListCopy[venue.id] = false;
-                // TODO - Put all this code into its own function
-                // let imgApiUrl = `https://api.foursquare.com/v2/venues/${venue.id}/photos?client_id=U1E3HY25OEO1J3WQFC4QZBA4NZNR44W1ELUPUJOC34DISYQI&client_secret=C4ADDKI4L2RP0AHEBV3YZNAXCGWOY4QYTBJTQQ4Y2EPFARLY&v=20180323`
-                // fetch(imgApiUrl)
-                //   .then(res => {
-                //     res.json()
-                //       .then(imgJson => {
-                //         // Loop over the images until a suitable one is found, then stop (we're only using one picture for now)
-                //         if (Object.keys(imgJson.response).length > 0) {
-                //           let found = false;
-                //           for (const imgData of imgJson.response.photos.items) {
-                //             if (imgData && imgData.prefix && imgData.suffix) {
-                //               imgDataCopy[venue.id] = imgData;
-                //               found = true;
-                //               break;
-                //             }
-                //           }
-                //           if (!found) {
-                //             imgDataCopy[venue.id] = 'https://via.placeholder.com/300x300';                          
-                //           }
-                //         }
-
-                //       });
-                //   })
-                //   .catch(error => {
-                //     console.log(error);
-                //   });
-                if (!imgDataCopy[venue.id]) {
-                  // Use a placeholder on error retrieving photos (just a random one for now since I can only get one picture per day with Foursquare)
-                  // Need to add a unique piece of data to the URL so that browser doesn't cache the same random image, see:
-                  // https://github.com/unsplash/unsplash-source-js/issues/9
-                  imgDataCopy[venue.id] = `https://picsum.photos/300/?random/${venue.id}`; // 'https://via.placeholder.com/300x300';
-                }
-              }
+    let venuePromise = utils.fetchVenues(apiUrl);
+    venuePromise
+      .then(venues => {
+        let venuesCopy = [];
+        let imgDataCopy = {};
+        let venClickedCopy = {};
+        for (const venue of venues) {
+          if (venue.id && venue.name && venue.location && venue.location.lat && venue.location.lng) {
+            venuesCopy.push(venue);
+            venClickedCopy[venue.id] = false;
+            if (!imgDataCopy[venue.id]) {
+              // Use a placeholder on error retrieving photos (just a random one for now since I can only get one picture per day with Foursquare)
+              // Need to add a unique piece of data to the URL so that browser doesn't cache the same random image, see:
+              // https://github.com/unsplash/unsplash-source-js/issues/9
+              imgDataCopy[venue.id] = `https://picsum.photos/300/?random/${venue.id}`; // 'https://via.placeholder.com/300x300';
             }
-            this.setState({ venues: venuesCopy });
-            this.setState({ filteredVenues: venuesCopy });
-            this.setState({ venueImgData: imgDataCopy });
-            this.setState({ venueClassList: venClassListCopy });
-          });
+          }
+        }
+        this.setState({ venues: venuesCopy });
+        this.setState({ filteredVenues: venuesCopy });
+        this.setState({ venueImgData: imgDataCopy });
+        this.setState({ venueClicked: venClickedCopy });
       })
       .catch(error => {
         console.log(error);
@@ -165,7 +137,7 @@ class App extends Component {
   */
   render() {
     return (
-      <div>
+      <div>        
         <Sidebar
           id='sidebar'
           position='right'
@@ -201,7 +173,7 @@ class App extends Component {
               <Pane
                 key={`${venue.id}-anim`}
                 name={`${venue.id}-pane`}
-                className={this.state.venueClassList[venue.id] ? 'animated bounce' : 'no-click'}
+                className={this.state.venueClicked[venue.id] ? 'animated bounce' : 'no-click'}
               >
                 <Marker
                   key={venue.id}
