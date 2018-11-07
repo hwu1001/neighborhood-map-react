@@ -18,6 +18,8 @@ const isLocalhost = Boolean(
     )
 );
 
+const staticCacheName = 'neighborhood-map-v1';
+
 export function register() {
   if (process.env.NODE_ENV === 'production' && 'serviceWorker' in navigator) {
     // The URL constructor is available in all browsers that support SW.
@@ -49,6 +51,58 @@ export function register() {
         // Is not local host. Just register service worker
         registerValidSW(swUrl);
       }
+    });
+    
+    // Note that this won't currently do anything, but the React setup for customizing your service worker
+    // is a bit involved. See here for some details: https://stackoverflow.com/a/47683539
+    window.addEventListener('fetch', (event) => {
+      console.log('fetching event here!');
+      event.respondWith(
+          caches.match(event.request)
+              .then((response) => {
+                  // If we have it in the cache then return it
+                  if (response) {
+                      return response;
+                  }
+  
+  
+                  // Below is mostly from: 
+                  // https://developers.google.com/web/fundamentals/primers/service-workers/#cache_and_return_requests
+                  // This will allowing caching of fetched requests that our review page is making. For example,
+                  // map tiles, css, etc.
+  
+                  // IMPORTANT: Clone the request. A request is a stream and
+                  // can only be consumed once. Since we are consuming this
+                  // once by cache and once by the browser for fetch, we need
+                  // to clone the response.
+                  let fetchRequestClone = event.request.clone();
+  
+                  return fetch(fetchRequestClone).then(
+                      (response) => {
+                          // Check if we received a valid response
+                          if (!response || response.status !== 200 || response.type !== 'basic') {
+                              return response;
+                          }
+  
+                          // IMPORTANT: Clone the response. A response is a stream
+                          // and because we want the browser to consume the response
+                          // as well as the cache consuming the response, we need
+                          // to clone it so we have two streams.
+                          let responseToCache = response.clone();
+  
+                          caches.open(staticCacheName)
+                              .then((cache) => {
+                                  cache.put(event.request, responseToCache);
+                              });
+  
+                          return response;
+                      }
+                  );
+              })
+              .catch((err) => {
+                  console.log('Fetch failed. Error: ' + err);
+              })
+      );
     });
   }
 }

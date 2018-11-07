@@ -1,5 +1,7 @@
 # Neighborhood Map Project
 ## Instructions
+See the [Known Issues](#known-issues) section below before running the app.
+
 To get started you can:
 * Install `npm`
 * Clone this repo with `git clone`
@@ -17,10 +19,11 @@ To test with service workers in the production build:
 * React Leaflet
 * React Leaflet Sidetabs
 * React Icons
+* Animate.css
 * Data is provided by the Foursquare API
 
 ## Create React App
 This project was bootstrapped with[ Create React App](https://github.com/facebook/create-react-app). You can find more information on how to perform common tasks [here](https://github.com/facebook/create-react-app/blob/master/packages/react-scripts/template/README.md).
 
 ## Known issues
-* There's an issue in the React Leaflet library where adding multiple classes to a specific component will generate an error. A modified version of `Pane.js` is in the repo can be used in place of the one that is put into `node_modules/` automatically. The modified version will prevent any errors and allow the markers to bounce when clicked.
+* There's an issue in the React Leaflet library where adding multiple classes to a specific component will generate an error. A modified version of `Pane.js` is in the repo can be used in place of the one that is put into `node_modules/` automatically. The file is located at `/node_modules/react-leaflet/es/Pane.js`. The modified version will prevent any errors and allow the markers to bounce when clicked.
